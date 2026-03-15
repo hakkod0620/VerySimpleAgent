@@ -15,7 +15,7 @@ else:
     print("讀取到 API Key！")
 
 
-print("--- 啟動 Gemini 人工智慧大腦 ---")
+print("--- 啟動 Gemini  ---")
 
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
