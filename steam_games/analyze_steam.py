@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 print("啟動 Steam 數據分析模組...\n")
 
@@ -15,7 +16,6 @@ print("\n--- 資料表基本資訊 (Info) ---")
 # 提示：使用 df.info() 可以看透這個資料表有幾個欄位、哪些欄位有空值
 df.info()
 
-import numpy as np # 我們需要 numpy 來呼叫真正的空值 (np.nan)
 
 print("\n--- 啟動資料清洗手術 (升級版) ---")
 
@@ -37,6 +37,34 @@ print(df)
 print("\n--- 清洗後的資料表基本資訊 (Info) ---")
 df.info()
 
+
+
+
+print("\n--- 進行特徵工程 (Feature Engineering) ---")
+
+# 1. 計算「總評論數」
+# 邏輯：總評論數 = 好評數 + 負評數
+df['TotalReviews'] = df['PositiveReviews'] + df['NegativeReviews']
+
+# 2. 計算「好評率」
+# 邏輯：好評率 = 好評數 / 總評論數 (我們把它轉成百分比，所以乘以 100)
+# 提示：請模仿上面的寫法，完成下面這行程式碼
+df['PositiveRatio'] = (df['PositiveReviews'] / df['TotalReviews']) * 100
+
+print("--- 最終準備餵給 AI 的精華資料 ---")
+# 我們只挑選出未來要給 AI 訓練的「數值」欄位來看
+print(df[['Name', 'Price', 'TotalReviews', 'PositiveRatio']])
+
+
+import numpy as np # 確保檔案最上面有 import numpy as np
+
+print("\n--- 機器學習前置準備：建立預測目標 (Label) ---")
+
+# 如果好評率 >= 90，標記為 1 (神作)，否則標記為 0 (普通)
+# 提示：我們使用 np.where(條件, 符合時的值, 不符合時的值)
+df['Is_Hit'] = np.where(df['PositiveRatio'] >= 90, 1, 0)
+
+print(df[['Name', 'PositiveRatio', 'Is_Hit']])
 
 
 
