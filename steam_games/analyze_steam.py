@@ -56,7 +56,6 @@ print("--- 最終準備餵給 AI 的精華資料 ---")
 print(df[['Name', 'Price', 'TotalReviews', 'PositiveRatio']])
 
 
-import numpy as np # 確保檔案最上面有 import numpy as np
 
 print("\n--- 機器學習前置準備：建立預測目標 (Label) ---")
 
@@ -65,6 +64,66 @@ print("\n--- 機器學習前置準備：建立預測目標 (Label) ---")
 df['Is_Hit'] = np.where(df['PositiveRatio'] >= 90, 1, 0)
 
 print(df[['Name', 'PositiveRatio', 'Is_Hit']])
+
+
+print("\n--- 準備機器學習資料集 ---")
+
+# 1. 將所有含有 NaN 的列刪除 (因為 sklearn 模型不接受空值)
+# 提示：使用 dropna() 函數
+df_ml = df.dropna()
+
+# 2. 定義特徵 (X) 和目標 (y)
+# X (Features): 模型用來學習的線索。我們選用 'Price' 和 'TotalReviews'
+X = df_ml[['Price', 'TotalReviews']]
+
+# y (Label/Target): 模型要預測的目標
+y = df_ml['Is_Hit']
+
+print("特徵 (X) 長這樣：")
+print(X)
+print("\n目標 (y) 長這樣：")
+print(y)
+
+from sklearn.tree import DecisionTreeClassifier
+
+print("\n--- 召喚決策樹模型並開始訓練 ---")
+
+# 1. 建立一個決策樹模型的實例 (就像是新生入學)
+# random_state=42 是為了確保每次跑出來的結果都一樣，方便我們除錯
+model = DecisionTreeClassifier(random_state=42)
+
+# 2. 讓模型開始學習！(Fit 函數)
+# 把特徵 (X) 和解答 (y) 給它，讓它自己找規律
+model.fit(X, y)
+
+print("模型訓練完成！🎓")
+
+
+
+print("\n--- 🔮 AI 隨堂測驗：預測新遊戲 ---")
+
+# 1. 虛構兩款新遊戲的資料
+# 注意：餵給 AI 的特徵順序，必須跟訓練時一模一樣 (先 Price，再 TotalReviews)
+# 遊戲 A (獨立小遊戲)：定價 4.99，剛上市只有 500 則評論
+# 遊戲 B (3A 級大作)：定價 69.99，累積了 80 萬則評論
+new_games = pd.DataFrame({
+    'Price': [4.99, 69.99],
+    'TotalReviews': [500, 800000]
+})
+
+print("我們請 AI 評估以下兩款新遊戲：")
+print(new_games)
+
+# 2. 呼叫 predict() 函數讓 AI 鐵口直斷！
+predictions = model.predict(new_games)
+
+# 3. 把 AI 的預測結果貼回表格中印出來
+new_games['Predicted_Is_Hit'] = predictions
+
+print("\n--- 📝 AI 預測結果出爐 ---")
+print(new_games)
+
+
 
 
 
